@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-onebot",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Communication"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://github.com/botuniverse/onebot-11/blob/master/communication/authorization.md"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/botuniverse/onebot-11/blob/master/api/public.md"
+			}
+		]
+	}
+}

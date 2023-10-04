@@ -30,8 +30,10 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
+      "dist/credentials/OneBotApi.credentials.js"
     ],
     "nodes": [
+      "dist/nodes/OneBot/OneBot.node.js"
     ]
   },
   "devDependencies": {
