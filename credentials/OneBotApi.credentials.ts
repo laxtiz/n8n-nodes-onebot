@@ -8,7 +8,7 @@ import {
 export class OneBotApi implements ICredentialType {
 	name = 'oneBotApi';
 	displayName = 'OneBot API';
-	documentationUrl = 'https://docs.go-cqhttp.org/reference/';
+	documentationUrl = 'https://github.com/botuniverse/onebot-11/blob/master/communication/authorization.md';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Server',
