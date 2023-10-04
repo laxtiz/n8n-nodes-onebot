@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-onebot",
   "version": "1.0.1",
-  "description": "",
+  "description": "OneBot node for n8n workflow, now you can send message to your QQ friend or group",
   "keywords": [
     "n8n-community-node-package"
   ],
