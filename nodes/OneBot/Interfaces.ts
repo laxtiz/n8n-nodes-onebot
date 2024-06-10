@@ -25,3 +25,8 @@ export type GroupProperties = PropertiesOf<GroupAction>;
 
 export type MiscAction = Entity<OneBotMap, 'misc'>;
 export type MiscProperties = PropertiesOf<MiscAction>;
+
+export interface LoginInfo {
+	user_id: number;
+	nickname: string;
+}

@@ -8,7 +8,7 @@ import {
 } from 'n8n-workflow';
 
 import { apiRequest } from './GenericFunctions';
-import { OneBotAction } from './Interfaces';
+import { LoginInfo, MessageAction, OneBotAction } from './Interfaces';
 import { getFriendList, getGroupList, getGroupMemberList } from './SearchFunctions';
 
 export class OneBot implements INodeType {
@@ -254,6 +254,20 @@ export class OneBot implements INodeType {
 					},
 				},
 			},
+			{
+				displayName: 'Forward Mode',
+				name: 'forward_mode',
+				type: 'boolean',
+				noDataExpression: true,
+				default: false,
+				description: 'Whether to forward messages when there are multiple items',
+				displayOptions: {
+					show: {
+						resource: ['message'],
+						operation: ['send_private_msg', 'send_group_msg'],
+					},
+				},
+			},
 		],
 	};
 
@@ -268,8 +282,46 @@ export class OneBot implements INodeType {
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const resource = this.getNodeParameter('resource');
-		const result: INodeExecutionData[] = [];
 
+		if (resource === 'message' && items.length > 1) {
+			const forward_mode = this.getNodeParameter('forward_mode', 0) as boolean;
+			if (forward_mode) {
+				const operation = this.getNodeParameter('operation', 0) as string;
+				const action = { resource, operation } as MessageAction;
+
+				const {data: info} = (await apiRequest.call(this, 'GET', '/get_login_info')) as {
+					data: LoginInfo
+				};
+
+				const body: IDataObject = {};
+				body.messages = items.map((item, index) => ({
+					type: 'node',
+					data: {
+						name: info.nickname,
+						uin: info.user_id.toString(),
+						content: this.getNodeParameter('message', index) as string,
+					},
+				}));
+
+				let endpoint = '';
+				switch (action.operation) {
+					case 'send_private_msg':
+						endpoint = '/send_private_forward_msg';
+						body.user_id = this.getNodeParameter('user_id', 0) as number;
+						break;
+
+					case 'send_group_msg':
+						endpoint = '/send_group_forward_msg';
+						body.group_id = this.getNodeParameter('group_id', 0) as number;
+						break;
+				}
+				const data = await apiRequest.call(this, 'POST', endpoint, body);
+				const json = this.helpers.returnJsonArray(data);
+				return [json];
+			}
+		}
+
+		const result: INodeExecutionData[] = [];
 		for (let index = 0; index < items.length; index++) {
 			const operation = this.getNodeParameter('operation', index);
 			const action = { resource, operation } as OneBotAction;
